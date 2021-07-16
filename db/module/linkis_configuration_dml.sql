@@ -1,246 +1,215 @@
-INSERT INTO `linkis_application` (`id`, `name`, `chinese_name`, `description`) VALUES (0, '通用设置', NULL, NULL);
-INSERT INTO `linkis_application` (`id`, `name`, `chinese_name`, `description`) VALUES (0, 'spark', NULL, NULL);
-INSERT INTO `linkis_application` (`id`, `name`, `chinese_name`, `description`) VALUES (0, 'IDE', NULL, NULL);
-INSERT INTO `linkis_application` (`id`, `name`, `chinese_name`, `description`) VALUES (0, 'hive', NULL, NULL);
-INSERT INTO `linkis_application` (`id`, `name`, `chinese_name`, `description`) VALUES (0, 'storage', NULL, NULL);
-INSERT INTO `linkis_application` (`id`, `name`, `chinese_name`, `description`) VALUES (0, 'python', NULL, NULL);
-INSERT INTO `linkis_application` (`id`, `name`, `chinese_name`, `description`) VALUES (0, 'tidb', NULL, NULL);
-INSERT INTO `linkis_application` (`id`, `name`, `chinese_name`, `description`) VALUES (0, 'pipeline', NULL, NULL);
-
-SELECT @application_id := id from linkis_application where name = '通用设置';
-INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', '队列资源', NULL, @application_id);
-#INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', '预热机制', NULL, @application_id);
-#INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', '清理机制', NULL, @application_id);
-#INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', '引擎设置', NULL, @application_id);
-INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', '驱动器资源', NULL, @application_id);
-
-SELECT @application_id := id from linkis_application where name = 'spark';
-INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', 'spark资源设置', NULL, @application_id);
-#INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', 'spark引擎设置', NULL, @application_id);
-
-SELECT @application_id := id from linkis_application where name = 'hive';
-#INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', 'hive引擎设置', NULL, @application_id);
-INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', 'hive资源设置', NULL, @application_id);
-
-SELECT @application_id := id from linkis_application where name = 'python';
-#INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', 'python引擎设置', NULL, @application_id);
-INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', 'python资源设置', NULL, @application_id);
-
-SELECT @application_id := id from linkis_application where name = 'tidb';
-INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', 'tidb设置', NULL, @application_id);
-#INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', 'spark引擎设置', NULL, @application_id);
-INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', 'spark资源设置', NULL, @application_id);
-
-SELECT @application_id := id from linkis_application where name = 'pipeline';
-INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', '导入导出设置', NULL, @application_id);
-INSERT INTO `linkis_config_tree` (`id`, `parent_id`, `name`, `description`, `application_id`) VALUES (0, '0', '导入导出资源设置', NULL, @application_id);
 
 
+-- 变量：
+SET @SPARK_LABEL="spark-2.4.3";
+SET @HIVE_LABEL="hive-1.2.1";
+SET @PYTHON_LABEL="python-python2";
+SET @PIPELINE_LABEL="pipeline-*";
+SET @JDBC_LABEL="jdbc-4";
 
-SELECT @application_id := id from linkis_application where name = '通用设置';
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.yarnqueue', 'yarn队列名', 'yarn队列名', @application_id, 'ide', 'None', NULL, '0', '0', '1');
-#INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.preheating.time', '预热时间', '预热时间', @application_id, '9:00', 'None', NULL, '0', '0', '1');
-#INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.tmpfile.clean.time', 'tmp文件清理时间', 'tmp文件清理时间', @application_id, '10:00', 'None', NULL, '0', '0', '1');
+-- 衍生变量：
+SET @SPARK_ALL=CONCAT('*-*,',@SPARK_LABEL);
+SET @SPARK_IDE=CONCAT('*-IDE,',@SPARK_LABEL);
+SET @SPARK_NODE=CONCAT('*-nodeexecution,',@SPARK_LABEL);
+SET @SPARK_VISUALIS=CONCAT('*-Visualis,',@SPARK_LABEL);
 
-#INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.yarnqueue.cores.max', '取值范围：1-500，单位：个', '队列CPU使用上限', @application_id, '150', 'Regex', '^(?:[1-9]\\d?|[1234]\\d{2}|500)$', '0', '0', '1');
-#INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `unit`) VALUES (0, 'wds.linkis.yarnqueue.memory.max', '取值范围：1-1000，单位：G', '队列内存使用上限', @application_id, '300G', 'Regex', '^([1-9]\\d{0,2}|1000)(G|g)$', '0', '0', '1','G');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `unit`) VALUES (0, 'wds.linkis.client.memory.max', '取值范围：1-100，单位：G', '驱动器内存使用上限', @application_id, '20G', 'Regex', '^([1-9]\\d{0,1}|100)(G|g)$', '0', '0', '1', 'G');
-#INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.instance', '范围：1-20，单位：个', '引擎最大并发数', @application_id, '10', 'NumInterval', '[1,20]', '0', '0', '1');
+SET @HIVE_ALL=CONCAT('*-*,',@HIVE_LABEL);
+SET @HIVE_IDE=CONCAT('*-IDE,',@HIVE_LABEL);
+SET @HIVE_NODE=CONCAT('*-nodeexecution,',@HIVE_LABEL);
+
+SET @PYTHON_ALL=CONCAT('*-*,',@PYTHON_LABEL);
+SET @PYTHON_IDE=CONCAT('*-IDE,',@PYTHON_LABEL);
+SET @PYTHON_NODE=CONCAT('*-nodeexecution,',@PYTHON_LABEL);
+
+SET @PIPELINE_ALL=CONCAT('*-*,',@PIPELINE_LABEL);
+SET @PIPELINE_IDE=CONCAT('*-IDE,',@PIPELINE_LABEL);
+
+SET @JDBC_ALL=CONCAT('*-*,',@JDBC_LABEL);
+SET @JDBC_IDE=CONCAT('*-IDE,',@JDBC_LABEL);
+
+- Default Key of Configuration
+-- Global Settings
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.yarnqueue', 'yarn队列名', 'yarn队列名', 'default', 'None', NULL, '0', '0', '1', '队列资源');
+-- spark
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.yarnqueue.instance.max', '取值范围：1-128，单位：个', 'yarn队列实例最大个数', '30', 'Regex', '^(?:[1-9]\\d?|[1234]\\d{2}|128)$', '0', '0', '1', '队列资源', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.yarnqueue.cores.max', '取值范围：1-500，单位：个', '队列CPU使用上限', '150', 'Regex', '^(?:[1-9]\\d?|[1234]\\d{2}|500)$', '0', '0', '1', '队列资源', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.yarnqueue.memory.max', '取值范围：1-1000，单位：G', '队列内存使用上限', '300G', 'Regex', '^([1-9]\\d{0,2}|1000)(G|g)$', '0', '0', '1', '队列资源', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.client.memory.max', '取值范围：1-100，单位：G', '驱动器内存使用上限', '20G', 'Regex', '^([1-9]\\d{0,1}|100)(G|g)$', '0', '0', '1', '队列资源', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.client.core.max', '取值范围：1-128，单位：个', '驱动器核心个数上限', '10', 'Regex', '^(?:[1-9]\\d?|[1234]\\d{2}|128)$', '0', '0', '1', '队列资源', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.instance', '范围：1-20，单位：个', '引擎最大并发数', '10', 'NumInterval', '[1,20]', '0', '0', '1', '队列资源', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.executor.instances', '取值范围：1-40，单位：个', '执行器实例最大并发数', '2', 'NumInterval', '[1,40]', '0', '0', '2', 'spark资源设置', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.executor.cores', '取值范围：1-8，单位：个', '执行器核心个数',  '2', 'NumInterval', '[1,2]', '1', '0', '1','spark资源设置', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.executor.memory', '取值范围：3-15，单位：G', '执行器内存大小', '3', 'NumInterval', '[3,15]', '0', '0', '3', 'spark资源设置', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.driver.cores', '取值范围：只能取1，单位：个', '驱动器核心个数', '1', 'NumInterval', '[1,1]', '1', '1', '1', 'spark资源设置','spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.driver.memory', '取值范围：1-15，单位：G', '驱动器内存大小','2', 'NumInterval', '[1,15]', '0', '0', '1', 'spark资源设置', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.pd.addresses', NULL, NULL, 'pd0:2379', 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.tidb.addr', NULL, NULL, 'tidb', 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.tidb.password', NULL, NULL, NULL, 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.tidb.port', NULL, NULL, '4000', 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.tidb.user', NULL, NULL, 'root', 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.python.version', '取值范围：python2,python3', 'python版本','python2', 'OFT', '[\"python3\",\"python2\"]', '0', '0', '1', 'spark引擎设置', 'spark');
+-- hive
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.client.memory.max', '取值范围：1-100，单位：G', '驱动器内存使用上限', '20G', 'Regex', '^([1-9]\\d{0,1}|100)(G|g)$', '0', '0', '1', '队列资源', 'hive');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.client.core.max', '取值范围：1-128，单位：个', '驱动器核心个数上限', '10', 'Regex', '^(?:[1-9]\\d?|[1234]\\d{2}|128)$', '0', '0', '1', '队列资源', 'hive');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.instance', '范围：1-20，单位：个', '引擎最大并发数', '10', 'NumInterval', '[1,20]', '0', '0', '1', '队列资源', 'hive');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('hive.client.memory', '取值范围：1-10，单位：G', 'hive引擎初始化内存大小','2', 'NumInterval', '[1,10]', '0', '0', '1', 'hive引擎设置', 'hive');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('hive.client.java.opts', 'hive客户端进程参数', 'hive引擎启动时jvm参数','', 'None', NULL, '1', '1', '1', 'hive引擎设置', 'hive');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('mapred.reduce.tasks', '范围：1-20，单位：个', 'reduce数', '10', 'NumInterval', '[1,20]', '0', '1', '1', 'hive资源设置', 'hive');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('dfs.block.size', '取值范围：2-10，单位：G', 'map数据块大小', '10', 'NumInterval', '[2,10]', '0', '1', '1', 'hive资源设置', 'hive');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('hive.exec.reduce.bytes.per.reducer', '取值范围：2-10，单位：G', 'reduce处理的数据量', '10', 'NumInterval', '[2,10]', '0', '1', '1', 'hive资源设置', 'hive');
+-- python
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.client.memory.max', '取值范围：1-100，单位：G', '驱动器内存使用上限', '20G', 'Regex', '^([1-9]\\d{0,1}|100)(G|g)$', '0', '0', '1', '队列资源', 'python');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.client.core.max', '取值范围：1-128，单位：个', '驱动器核心个数上限', '10', 'Regex', '^(?:[1-9]\\d?|[1234]\\d{2}|128)$', '0', '0', '1', '队列资源', 'python');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.instance', '范围：1-20，单位：个', '引擎最大并发数', '10', 'NumInterval', '[1,20]', '0', '0', '1', '队列资源', 'python');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('python.java.client.memory', '取值范围：1-2，单位：G', 'python引擎初始化内存大小', '1', 'NumInterval', '[1,2]', '0', '0', '1', 'python引擎设置', 'python');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('python.version', '取值范围：python2,python3', 'python版本','python2', 'OFT', '[\"python3\",\"python2\"]', '0', '0', '1', 'python引擎设置', 'python');
+-- pipeline
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('pipeline.output.mold', '取值范围：csv或excel', '结果集导出类型','csv', 'OFT', '[\"csv\",\"excel\"]', '0', '0', '1', 'pipeline引擎设置', 'pipeline');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('pipeline.field.split', '取值范围：，或\\t', 'csv分隔符',',', 'OFT', '[\",\",\"\\\\t\"]', '0', '0', '1', 'pipeline引擎设置', 'pipeline');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('pipeline.output.charset', '取值范围：utf-8或gbk', '结果集导出字符集','gbk', 'OFT', '[\"utf-8\",\"gbk\"]', '0', '0', '1', 'pipeline引擎设置', 'pipeline');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('pipeline.output.isoverwtite', '取值范围：true或false', '是否覆写','true', 'OFT', '[\"true\",\"false\"]', '0', '0', '1', 'pipeline引擎设置', 'pipeline');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.instance', '范围：1-3，单位：个', 'pipeline引擎最大并发数','3', 'NumInterval', '[1,3]', '0', '0', '1', 'pipeline引擎设置', 'pipeline');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('pipeline.engine.memory', '取值范围：1-10，单位：G', 'pipeline引擎初始化内存大小','2', 'NumInterval', '[1,10]', '0', '0', '1', 'pipeline资源设置', 'pipeline');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('pipeline.output.shuffle.null.type', '取值范围：NULL或者BLANK', '空值替换','NULL', 'OFT', '[\"NULL\",\"BLANK\"]', '0', '0', '1', 'pipeline引擎设置', 'pipeline');
+-- jdbc
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.jdbc.connect.url', '例如:jdbc:hive2://127.0.0.1:10000', 'jdbc连接地址', 'jdbc:hive2://127.0.0.1:10000', 'Regex', '^\s*jdbc:\w+://([^:]+)(:\d+)(/[^\?]+)?(\?\S*)?$', '0', '0', '1', '数据源配置', 'jdbc');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.jdbc.version', '取值范围：jdbc3,jdbc4', 'jdbc版本','jdbc4', 'OFT', '[\"jdbc3\",\"jdbc4\"]', '0', '0', '1', '数据源配置', 'jdbc');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.jdbc.username', 'username', '数据库连接用户名', '', '', '', '0', '0', '1', '用户配置', 'jdbc');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.jdbc.password', 'password', '数据库连接密码', '', '', '', '0', '0', '1', '用户配置', 'jdbc');
+insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.jdbc.connect.max', '范围：1-20，单位：个', 'jdbc引擎最大连接数', '10', 'NumInterval', '[1,20]', '0', '0', '1', '数据源配置', 'jdbc');
+-- Configuration first level directory
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-全局设置,*-*', 'OPTIONAL', 2, now(), now());
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-IDE,*-*', 'OPTIONAL', 2, now(), now());
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-Visualis,*-*', 'OPTIONAL', 2, now(), now());
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-nodeexecution,*-*', 'OPTIONAL', 2, now(), now());
 
 
-SELECT @application_id := id from linkis_application where name = 'IDE';
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.executor.instances', '取值范围：1-40，单位：个', '执行器实例最大并发数', @application_id, '2', 'NumInterval', '[1,40]', '0', '0', '2');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.executor.cores', '取值范围：1-8，单位：个', '执行器核心个数', @application_id, '2', 'NumInterval', '[1,2]', '1', '0', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.executor.memory', '取值范围：3-15，单位：G', '执行器内存大小', @application_id, '3', 'NumInterval', '[3,15]', '0', '0', '3');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.driver.cores', '取值范围：只能取1，单位：个', '驱动器核心个数', @application_id, '1', 'NumInterval', '[1,1]', '1', '1', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.driver.memory', '取值范围：1-15，单位：G', '驱动器内存大小', @application_id, '2', 'NumInterval', '[1,15]', '0', '0', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'hive.client.memory', '取值范围：1-10，单位：G', 'hive引擎初始化内存大小', @application_id, '2', 'NumInterval', '[1,10]', '0', '0', '1');
-#INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'hive.client.java.opts', 'hive客户端进程参数', 'hive引擎启动时jvm参数', @application_id, '', 'None', NULL, '1', '1', '1');
+-- Engine level default configuration
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-*,*-*', 'OPTIONAL', 2, now(), now());
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@SPARK_ALL, 'OPTIONAL', 2, now(), now());
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@HIVE_ALL, 'OPTIONAL', 2, now(), now());
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@PYTHON_ALL, 'OPTIONAL', 2, now(), now());
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@PIPELINE_ALL, 'OPTIONAL', 2, now(), now());
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@JDBC_ALL, 'OPTIONAL', 2, now(), now());
 
-#INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.instance', '范围：1-3，单位：个', 'hive引擎最大并发数', @application_id, '3', 'NumInterval', '[1,3]', '0', '0', '1');
-#INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.instance', '范围：1-3，单位：个', 'spark引擎最大并发数', @application_id, '3', 'NumInterval', '[1,3]', '0', '0', '1');
-#INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.instance', '范围：1-3，单位：个', 'python引擎最大并发数', @application_id, '3', 'NumInterval', '[1,3]', '0', '0', '1');
-#INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'mapred.reduce.tasks', '范围：1-20，单位：个', 'reduce数', @application_id, '10', 'NumInterval', '[1,20]', '0', '1', '1');
-#INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'dfs.block.size', '取值范围：2-10，单位：G', 'map数据块大小', @application_id, '10', 'NumInterval', '[2,10]', '0', '1', '1');
-#INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'hive.exec.reduce.bytes.per.reducer', '取值范围：2-10，单位：G', 'reduce处理的数据量', @application_id, '10', 'NumInterval', '[2,10]', '0', '1', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'python.java.client.memory', '取值范围：1-2，单位：G', 'python引擎初始化内存大小', @application_id, '1', 'NumInterval', '[1,2]', '0', '0', '1');
+-- Custom correlation engine (e.g. spark-2.4.3) and configKey value
+-- Global Settings
+insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+(select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type is null and label.label_value = "*-*,*-*");
+
+-- spark-2.4.3(Here choose to associate all spark type Key values with spark2.4.3)
+insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+(select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'spark' and label.label_value = @SPARK_ALL);
+
+-- hive-1.2.1
+insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+(select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'hive' and label_value = @HIVE_ALL);
+
+-- python-python2
+insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+(select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'python' and label_value = @PYTHON_ALL);
+
+-- pipeline-*
+insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+(select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'pipeline' and label_value = @PIPELINE_ALL);
+
+-- jdbc-4
+insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+(select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'jdbc' and label_value = @JDBC_ALL);
+
+------------------------------------------------------------------------
+-- If you need to customize the parameters of the new engine, the following configuration does not need to write SQL initialization
+-- Just write the SQL above, and then add applications and engines to the management console to automatically initialize the configuration
+------------------------------------------------------------------------
+
+-- Configuration secondary directory (creator level default configuration)
+-- IDE
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@SPARK_IDE, 'OPTIONAL', 2, now(), now());
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@HIVE_IDE, 'OPTIONAL', 2, now(), now());
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@PYTHON_IDE, 'OPTIONAL', 2, now(), now());
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@PIPELINE_IDE, 'OPTIONAL', 2, now(), now());
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@JDBC_IDE, 'OPTIONAL', 2, now(), now());
+
+-- Visualis
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@SPARK_VISUALIS, 'OPTIONAL', 2, now(), now());
+-- nodeexecution
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@SPARK_NODE, 'OPTIONAL', 2, now(), now());
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@HIVE_NODE, 'OPTIONAL', 2, now(), now());
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@PYTHON_NODE, 'OPTIONAL', 2, now(), now());
 
 
-#INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'wds.linkis.instance', '范围：1-3，单位：个', 'spark引擎最大并发数', @application_id, '1', 'NumInterval', '[1,3]', '0', '0', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.executor.instances', '取值范围：1-40，单位：个', '执行器实例最大并发数', @application_id, '2', 'NumInterval', '[1,40]', '0', '0', '2');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.executor.cores', '取值范围：1-8，单位：个', '执行器核心个数', @application_id, '2', 'NumInterval', '[1,2]', '1', '0', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.executor.memory', '取值范围：3-15，单位：G', '执行器内存大小', @application_id, '3', 'NumInterval', '[3,15]', '0', '0', '3');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.driver.cores', '取值范围：只能取1，单位：个', '驱动器核心个数 ', @application_id, '1', 'NumInterval', '[1,1]', '1', '1', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.driver.memory', '取值范围：1-15，单位：G', '驱动器内存大小', @application_id, '2', 'NumInterval', '[1,15]', '0', '0', '1');
+-- Associate first-level and second-level directories
+select @label_id := id from linkis_cg_manager_label where `label_value` = '*-全局设置,*-*';
+insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 1);
 
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'pipeline.output.mold', '取值范围：csv或excel', '结果集导出类型', @application_id, 'csv', 'OFT', '[csv,excel]', '0', '0', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'pipeline.field.split', '取值范围：，或\\t', 'csv分隔符', @application_id, ',', 'OFT', '[\",\",\"\\\\t\"]', '0', '0', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'pipeline.output.charset', '取值范围：utf-8或gbk', '结果集导出字符集', @application_id, 'gbk', 'OFT', '[utf-8,gbk]', '0', '0', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'pipeline.output.isoverwtite', '取值范围：true或false', '是否覆写', @application_id, 'true', 'OFT', '[true,false]', '0', '0', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'pipeline.engine.memory', '取值范围：1-10，单位：G', 'pipeline引擎初始化内存大小', @application_id, '2', 'NumInterval', '[1,10]', '0', '0', '1');
+select @label_id := id from linkis_cg_manager_label where `label_value` = '*-IDE,*-*';
+insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 1);
 
+select @label_id := id from linkis_cg_manager_label where `label_value` = '*-Visualis,*-*';
+insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 1);
 
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.tispark.pd.addresses', NULL, NULL, @application_id, 'pd0:2379', 'None', NULL, '0', '0', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.tispark.tidb.addr', NULL, NULL, @application_id, 'tidb', 'None', NULL, '0', '0', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.tispark.tidb.password', NULL, NULL, @application_id, NULL, 'None', NULL, '0', '0', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.tispark.tidb.port', NULL, NULL, @application_id, '4000', 'None', NULL, '0', '0', '1');
-INSERT INTO `linkis_config_key` (`id`, `key`, `description`, `name`, `application_id`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`) VALUES (0, 'spark.tispark.tidb.user', NULL, NULL, @application_id, 'root', 'None', NULL, '0', '0', '1');
+select @label_id := id from linkis_cg_manager_label where `label_value` = '*-nodeexecution,*-*';
+insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 1);
 
+select @label_id := id from linkis_cg_manager_label where `label_value` = @SPARK_IDE;
+insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
 
-#---------------------------------------全局设置------------------
+select @label_id := id from linkis_cg_manager_label where `label_value` = @HIVE_IDE;
+insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
 
-SELECT @key_id := id from linkis_config_key WHERE `key` = 'wds.linkis.yarnqueue';
-SELECT @tree_id := id from linkis_config_tree WHERE `name` = '队列资源';
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
+select @label_id := id from linkis_cg_manager_label where `label_value` = @PYTHON_IDE;
+insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
 
-#SELECT @key_id := id from linkis_config_key WHERE `key` = 'wds.linkis.yarnqueue.cores.max';
-#SELECT @tree_id := id from linkis_config_tree WHERE `name` = '队列资源';
-#INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
+select @label_id := id from linkis_cg_manager_label where `label_value` = @PIPELINE_IDE;
+insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
 
-#SELECT @key_id := id from linkis_config_key WHERE `key` = 'wds.linkis.yarnqueue.memory.max';
-#SELECT @tree_id := id from linkis_config_tree WHERE `name` = '队列资源';
-#INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
+select @label_id := id from linkis_cg_manager_label where `label_value` = @JDBC_IDE;
+insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
 
-#SELECT @key_id := id from linkis_config_key WHERE `key` = 'wds.linkis.preheating.time';
-#SELECT @tree_id := id from linkis_config_tree WHERE `name` = '预热机制';
-#INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
+select @label_id := id from linkis_cg_manager_label where `label_value` =  @SPARK_VISUALIS;
+insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
 
-#SELECT @key_id := id from linkis_config_key WHERE `key` = 'wds.linkis.tmpfile.clean.time';
-#SELECT @tree_id := id from linkis_config_tree WHERE `name` = '清理机制';
-#INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
+select @label_id := id from linkis_cg_manager_label where `label_value` = @SPARK_NODE;
+insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
 
-#SELECT @key_id := id from linkis_config_key WHERE `name` = '引擎最大并发数';
-#SELECT @tree_id := id from linkis_config_tree WHERE `name` = '引擎设置';
-#INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
+select @label_id := id from linkis_cg_manager_label where `label_value` = @HIVE_NODE;
+insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
 
-SELECT @key_id := id from linkis_config_key WHERE `key` = 'wds.linkis.client.memory.max';
-SELECT @tree_id := id from linkis_config_tree WHERE `name` = '驱动器资源';
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
+select @label_id := id from linkis_cg_manager_label where `label_value` = @PYTHON_NODE;
+insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
 
-#---------------------------------------spark---------------
+---- Associate label and default configuration
+insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+(select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
+INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = '*-*,*-*');
 
-SELECT @key_id:=id from(SELECT k.id  as 'id'from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.executor.instances' and a.name = 'IDE' ORDER BY k.id limit 1) as tmp;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'spark资源设置' and a.name = 'spark' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
+-- spark2.4.3 default configuration
+insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+(select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
+INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @SPARK_ALL);
 
-#SELECT @key_id:=id from(SELECT k.id  as 'id'from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`name` = 'spark引擎最大并发数' and a.name = 'IDE' ORDER BY k.id limit 1) as tmp;
-#SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'spark引擎设置' and a.name = 'spark' ;
-#INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
+-- hive1.2.1 default configuration
+insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+(select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
+INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @HIVE_ALL);
 
-SELECT @key_id:=id from(SELECT k.id  as 'id'from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.executor.cores' and a.name = 'IDE' ORDER BY k.id limit 1) as tmp;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'spark资源设置' and a.name = 'spark' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
+-- python default configuration
+insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+(select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
+INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @PYTHON_ALL);
 
-SELECT @key_id:=id from(SELECT k.id  as 'id'from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.executor.memory' and a.name = 'IDE' ORDER BY k.id limit 1) as tmp;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'spark资源设置' and a.name = 'spark' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
+-- pipeline default configuration
+insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+(select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
+INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @PIPELINE_ALL);
 
-SELECT @key_id:=id from(SELECT k.id  as 'id'from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.driver.cores' and a.name = 'IDE' ORDER BY k.id limit 1) as tmp;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'spark资源设置' and a.name = 'spark' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id:=id from(SELECT k.id  as 'id'from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.driver.memory' and a.name = 'IDE' ORDER BY k.id limit 1) as tmp;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'spark资源设置' and a.name = 'spark' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-#---------------------------------------tidb------------------
-
-SELECT @key_id:=id from(SELECT k.id  as 'id'from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.executor.instances' and a.name = 'IDE' ORDER BY k.id desc limit 1) as tmp;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'spark资源设置' and a.name = 'tidb' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-#SELECT @key_id:=id from(SELECT k.id  as 'id'from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`name` = 'spark引擎最大并发数' and a.name = 'IDE' ORDER BY k.id desc limit 1) as tmp;
-#SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'spark引擎设置' and a.name = 'tidb' ;
-#INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id:=id from(SELECT k.id  as 'id'from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.executor.cores' and a.name = 'IDE' ORDER BY k.id desc limit 1) as tmp;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'spark资源设置' and a.name = 'tidb' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id:=id from(SELECT k.id  as 'id'from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.executor.memory' and a.name = 'IDE' ORDER BY k.id desc limit 1) as tmp;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'spark资源设置' and a.name = 'tidb' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id:=id from(SELECT k.id  as 'id'from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.driver.cores' and a.name = 'IDE' ORDER BY k.id desc limit 1) as tmp;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'spark资源设置' and a.name = 'tidb' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id:=id from(SELECT k.id  as 'id'from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.driver.memory' and a.name = 'IDE' ORDER BY k.id desc limit 1) as tmp;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'spark资源设置' and a.name = 'tidb' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.tispark.pd.addresses' and a.name = 'IDE' ;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'tidb设置' and a.name = 'tidb' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.tispark.tidb.addr' and a.name = 'IDE' ;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'tidb设置' and a.name = 'tidb' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.tispark.tidb.password' and a.name = 'IDE' ;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'tidb设置' and a.name = 'tidb' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.tispark.tidb.port' and a.name = 'IDE' ;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'tidb设置' and a.name = 'tidb' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'spark.tispark.tidb.user' and a.name = 'IDE' ;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'tidb设置' and a.name = 'tidb' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-#---------------------------hive-----------------
-#SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`name` = 'hive引擎最大并发数' and a.name = 'IDE' ;
-#SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'hive引擎设置' and a.name = 'hive' ;
-#INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'hive.client.memory' and a.name = 'IDE' ;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'hive资源设置' and a.name = 'hive' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-#SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'mapred.reduce.tasks' and a.name = 'IDE';
-#SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'hive资源设置' and a.name = 'hive' ;
-#INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-#SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'dfs.block.size' and a.name = 'IDE' ;
-#SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'hive资源设置' and a.name = 'hive' ;
-#INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-#SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'hive.exec.reduce.bytes.per.reducer' and a.name = 'IDE' ;
-#SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'hive资源设置' and a.name = 'hive' ;
-#INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-#SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'hive.client.java.opts' and a.name = 'IDE';
-#SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'hive资源设置' and a.name = 'hive' ;
-#INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-#------------------------python---------------------
-
-#SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`name` = 'python引擎最大并发数' and a.name = 'IDE'  ;
-#SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'python引擎设置' and a.name = 'python' ;
-#INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'python.java.client.memory' and a.name = 'IDE' ;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = 'python资源设置' and a.name = 'python' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-#---------------------------pipeline-----------------
-SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'pipeline.output.mold' and a.name = 'IDE' ;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = '导入导出设置' and a.name = 'pipeline' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'pipeline.field.split' and a.name = 'IDE' ;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = '导入导出设置' and a.name = 'pipeline' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'pipeline.output.charset' and a.name = 'IDE' ;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = '导入导出设置' and a.name = 'pipeline' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'pipeline.output.isoverwtite' and a.name = 'IDE' ;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = '导入导出设置' and a.name = 'pipeline' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
-
-SELECT @key_id := k.id from linkis_config_key k left join linkis_application a on k.application_id = a.id WHERE k.`key` = 'pipeline.engine.memory' and a.name = 'IDE' ;
-SELECT @tree_id := t.id from linkis_config_tree t left join linkis_application a on t.application_id = a.id  WHERE t.`name` = '导入导出资源设置' and a.name = 'pipeline' ;
-INSERT INTO `linkis_config_key_tree` (`id`, `key_id`, `tree_id`) VALUES (0, @key_id, @tree_id);
+-- jdbc default configuration
+insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+(select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
+INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @JDBC_ALL);
